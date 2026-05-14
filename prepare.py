@@ -168,8 +168,11 @@ def main() -> int:
             title, body = parse_title_and_body(caption)
             title = truncate(title, 100)
 
-            # Description: body + a short keyword tail (Pinterest treats hashtags in description as text)
-            description = truncate(body, 500)
+            # Photo credit at end of description (Pinterest desc is 500 chars).
+            photo_credit = (row.get("Photo Credit") or "").strip()
+            credit_suffix = f"\n\nPhoto: {photo_credit}" if photo_credit else ""
+            body_budget = 500 - len(credit_suffix)
+            description = truncate(body, max(1, body_budget)) + credit_suffix
 
             link = extract_link_from_caption(caption) or "https://www.beyulretreat.com"
             keywords = hashtags_to_keywords(row.get("Hashtags") or "")
