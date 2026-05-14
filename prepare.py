@@ -118,8 +118,10 @@ def hashtags_to_keywords(hashtag_field: str) -> str:
     tags = re.findall(r"#([A-Za-z0-9_]+)", hashtag_field)
     out = []
     for t in tags:
-        # Split camelCase: "ColoradoWeddingVenue" → "Colorado Wedding Venue"
-        spaced = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", t)
+        # Split camelCase and letter↔digit: "TeamRetreat2026" → "Team Retreat 2026"
+        spaced = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", t)
+        spaced = re.sub(r"(?<=[A-Za-z])(?=\d)", " ", spaced)
+        spaced = re.sub(r"(?<=\d)(?=[A-Za-z])", " ", spaced)
         out.append(spaced)
     # Dedupe preserving order.
     seen = set()
